@@ -10,7 +10,7 @@
                     </li>
                     <li v-if="!editing">
                         <span>绑定QQ：{{ userStore.$state.userqq }}</span>
-                        <el-button type="text" @click="editField('userqq')">编辑</el-button>
+                        <el-button @click="editField('userqq')">编辑</el-button>
                     </li>
                     <li v-else>
                         <span>绑定QQ：{{ userStore.$state.userqq }}</span>
@@ -40,7 +40,7 @@
     </div>
 </template>
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, watch } from "vue";
 
 let userCenter = ref(true);
 let editing = ref(false);
@@ -88,11 +88,35 @@ function UserLogout() {
 function editField(field) {
     editing.value = true;
     if (field === 'userqq') {
-        editUserqq.value = userqq.value;
+        watch(editUserqq, (newValue, oldValue) => {
+
+            userStore.setUserQQ(newValue);
+        });
     }
 }
+
+
 function confirmUpdate() {
-    userStore.setUserQQ(editUserqq.value);
-    showDialog("是否确认更新信息？");
+    axios
+        .get("/api/UserUpdate", {
+            params: {
+                type: "userqq",
+                data: userStore.$state.userqq
+            },
+            headers: {
+                Authorization: localStorage.getItem("token"),
+            },
+        })
+        .then(function (response) {
+            console.log(response.data);
+            if (response.data.status == true) {
+                showDialog(response.data.message);
+            } else {
+                showDialog(response.data.message);
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 }
 </script>
