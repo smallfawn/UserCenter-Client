@@ -58,7 +58,7 @@ function SendEmailMessage() {
     userStore.setUserName(username.value);
     userStore.setUserEmail(useremail.value);
     axios
-        .get("/api/sendEmilMessage", {
+        .get("/api/SendEmilMessage", {
             params: {
                 username: userStore.$state.username,
                 useremail: userStore.$state.useremail,

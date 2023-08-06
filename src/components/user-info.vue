@@ -1,7 +1,7 @@
 <template>
     <div v-if="userCenter">
         <el-card>
-            <div slot="header">后台内容</div>
+            <div slot="header">{{ userStore.$state.noticeMessage }}</div>
             <div>
                 <h5>会员中心</h5>
                 <ul>
@@ -51,6 +51,7 @@ const router = useRouter();
 const beforeMountHandler = () => {
     // 执行你的逻辑代码
     UserInfo()
+    GetNotice()
 };
 onBeforeMount(beforeMountHandler);
 import diaLog from './dia-log.vue';
@@ -60,6 +61,18 @@ function showDialog(message) {
     userStore.setDiaLogMessage(message)
     userStore.setDiaLogSwitch(true)
 };
+function GetNotice() {
+    axios
+        .get("/api/GetNotice")
+        .then(function (response) {
+            if (response.data.status == true) {
+                userStore.setNoticeMessage(response.data.message)
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
 function UserInfo() {
     axios
         .get("/api/UserInfo", {

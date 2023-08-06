@@ -13,6 +13,7 @@ export const useUserStore = defineStore('user', {
     code: '',
     dialogMessage: '',
     dialogSwtich: false,
+    noticeMessage: '',
   }),
   actions: {
     setUserName(value) {
@@ -44,6 +45,9 @@ export const useUserStore = defineStore('user', {
     },
     setDiaLogSwitch(value) {
       this.dialogSwtich = value
+    },
+    setNoticeMessage(value) {
+      this.noticeMessage = value;
     }
   }
 });
