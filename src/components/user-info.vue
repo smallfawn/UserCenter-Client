@@ -6,42 +6,45 @@
                 <h5>会员中心</h5>
                 <ul>
                     <li>
-                        <span>名字：{{ username }}</span>
+                        <span>名字：{{ userStore.$state.username }}</span>
+                    </li>
+                    <li v-if="!editing">
+                        <span>绑定QQ：{{ userStore.$state.userqq }}</span>
+                        <el-button type="text" @click="editField('userqq')">编辑</el-button>
+                    </li>
+                    <li v-else>
+                        <span>绑定QQ：{{ userStore.$state.userqq }}</span>
+                        <el-input v-model="editUserqq" placeholder="请输入绑定QQ"></el-input>
                     </li>
                     <li>
-                        <span>绑定QQ：{{ userqq }}</span>
+                        <span>邮箱：{{ userStore.$state.useremail }}</span>
                     </li>
                     <li>
-                        <span>邮箱：{{ useremail }}</span>
+                        <span>积分：{{ userStore.$state.userpoints }}</span>
                     </li>
                     <li>
-                        <span>积分：{{ userpoints }}</span>
+                        <span>组别：{{ userStore.$state.usergroups }}</span>
                     </li>
                     <li>
-                        <span>组别：{{ usergroups }}</span>
-                    </li>
-                    <li>
-                        <span>密钥：{{ userkey }}</span>
+                        <span>密钥：{{ userStore.$state.userkey }}</span>
                     </li>
                 </ul>
                 <div class="">
                     <el-button type="primary" @click="UserLogout">登出</el-button>
-                    <el-button type="primary" @click="UserUpdate">更新信息</el-button>
+                    <el-button type="primary" @click="confirmUpdate">更新信息</el-button>
                 </div>
             </div>
         </el-card>
-        <dia-log :parentDialogVisible="userStore.$state.dialogSwtich" :parentDialogString="userStore.$state.dialogMessage" />
+        <dia-log :parentDialogVisible="userStore.$state.dialogSwtich"
+            :parentDialogString="userStore.$state.dialogMessage" />
     </div>
 </template>
 <script setup>
 import { ref, onBeforeMount } from "vue";
-let username = ref("");
-let useremail = ref("");
-let userpoints = ref("");
-let usergroups = ref("");
-let userkey = ref("");
-let userqq = ref("");
+
 let userCenter = ref(true);
+let editing = ref(false);
+let editUserqq = ref("");
 import axios from "axios"
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -66,12 +69,12 @@ function UserInfo() {
         })
         .then(function (response) {
             if (response.data.status == true) {
-                username.value = response.data.data.username;
-                userqq.value = response.data.data.userqq;
-                userpoints.value = response.data.data.userpoints;
-                useremail.value = response.data.data.useremail;
-                usergroups.value = response.data.data.usergroups;
-                userkey.value = response.data.data.userkey;
+                userStore.setUserName(response.data.data.username)
+                userStore.setUserQQ(response.data.data.userqq)
+                userStore.setUserPoints(response.data.data.userpoints)
+                userStore.setUserEmail(response.data.data.useremail)
+                userStore.setUserGroups(response.data.data.usergroups)
+                userStore.setUserKey(response.data.data.userkey)
             }
         })
         .catch(function (error) {
@@ -82,8 +85,14 @@ function UserLogout() {
     localStorage.removeItem("token")
     router.push("/")
 }
-function UserUpdate() {
-    console.log(`更新数据`);
-    showDialog(`暂时无法更新`)
+function editField(field) {
+    editing.value = true;
+    if (field === 'userqq') {
+        editUserqq.value = userqq.value;
+    }
+}
+function confirmUpdate() {
+    userStore.setUserQQ(editUserqq.value);
+    showDialog("是否确认更新信息？");
 }
 </script>

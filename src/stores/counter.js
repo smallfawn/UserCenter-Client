@@ -7,8 +7,9 @@ export const useUserStore = defineStore('user', {
     password: '',
     useremail: '',
     userpoints: '',
-    usergroup: '',
+    usergroups: '',
     userqq: '',
+    userkey: '',
     code: '',
     dialogMessage: '',
     dialogSwtich: false,
@@ -26,11 +27,14 @@ export const useUserStore = defineStore('user', {
     setPassword(value) {
       this.password = value;
     },
-    setUserGroup(value) {
-      this.usergroup = value;
+    setUserGroups(value) {
+      this.usergroups = value;
     },
     setUserQQ(value) {
       this.userqq = value;
+    },
+    setUserKey(value){
+      this.userkey = value;
     },
     setCode(value) {
       this.code = value;
