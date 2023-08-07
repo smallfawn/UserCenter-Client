@@ -18,7 +18,8 @@
                 </el-form>
             </div>
         </el-card>
-        <dia-log :parentDialogVisible="userStore.$state.dialogSwtich" :parentDialogString="userStore.$state.dialogMessage" />
+        <dia-log :parentDialogVisible="userStore.$state.dialogSwtich"
+            :parentDialogString="userStore.$state.dialogMessage" />
     </div>
 </template>
 <script setup>
@@ -28,7 +29,6 @@ function showDialog(message) {
     userStore.setDiaLogMessage(message)
     userStore.setDiaLogSwitch(true)
 };
-
 import { useUserStore } from "../stores/counter";
 const userStore = useUserStore();
 import { useRouter } from 'vue-router';
@@ -37,31 +37,22 @@ import { ref, onMounted } from "vue";
 let username = ref("");
 let password = ref("");
 const loginCenter = ref(true)
-
-import axios from "axios"
-function UserLogin() {
+import HttpRequest from '../assets/request';
+async function UserLogin() {
     // 登录逻辑
     userStore.setUserName(username.value);
     userStore.setPassword(password.value);
-    axios
-        .get("/api/UserLogin", {
-            params: {
-                username: userStore.$state.username,
-                password: userStore.$state.password,
-            },
-        })
-        .then(function (response) {
-            if (response.data.status == true) {
-                const token = response.data.data.token;
-                localStorage.setItem("token", token);
-                router.push("./UserInfo")
-            } else {
-                showDialog(response.data.message)
-            }
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+    let options = {
+        url: `/api/UserLogin?username=${userStore.$state.username}&password=${userStore.$state.password}`
+    }
+    let UserLoginResult = await HttpRequest(options)
+    if (UserLoginResult.status == true) {
+        const token = UserLoginResult.data.token;
+        localStorage.setItem("token", token);
+        router.push("./UserInfo")
+    } else {
+        showDialog(UserLoginResult.message)
+    }
 }
 function UserRegisterCenter() {
     router.push('/UserRegister');

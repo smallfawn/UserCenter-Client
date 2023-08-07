@@ -45,7 +45,7 @@ import { ref, onBeforeMount, watch } from "vue";
 let userCenter = ref(true);
 let editing = ref(false);
 let editUserqq = ref("");
-import axios from "axios"
+import HttpRequest from "../assets/request";
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const beforeMountHandler = () => {
@@ -61,38 +61,30 @@ function showDialog(message) {
     userStore.setDiaLogMessage(message)
     userStore.setDiaLogSwitch(true)
 };
-function GetNotice() {
-    axios
-        .get("/api/GetNotice")
-        .then(function (response) {
-            if (response.data.status == true) {
-                userStore.setNoticeMessage(response.data.message)
-            }
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+async function GetNotice() {
+    let options = {
+        url: `/api/GetNotice`,
+    }
+    let GetNoticeResult = await HttpRequest(options)
+    if (GetNoticeResult.status == true) {
+        userStore.setNoticeMessage(GetNoticeResult.message)
+    }
 }
-function UserInfo() {
-    axios
-        .get("/api/UserInfo", {
-            headers: {
-                Authorization: localStorage.getItem("token"),
-            },
-        })
-        .then(function (response) {
-            if (response.data.status == true) {
-                userStore.setUserName(response.data.data.username)
-                userStore.setUserQQ(response.data.data.userqq)
-                userStore.setUserPoints(response.data.data.userpoints)
-                userStore.setUserEmail(response.data.data.useremail)
-                userStore.setUserGroups(response.data.data.usergroups)
-                userStore.setUserKey(response.data.data.userkey)
-            }
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+async function UserInfo() {
+    let options = {
+        url: `/api/UserInfo`,
+        headers: { Authorization: localStorage.getItem("token") }
+    }
+    let UserInfoResult = await HttpRequest(options)
+    console.log(UserInfoResult);
+    if (UserInfoResult.status == true) {
+        userStore.setUserName(UserInfoResult.data.username)
+        userStore.setUserQQ(UserInfoResult.data.userqq)
+        userStore.setUserPoints(UserInfoResult.data.userpoints)
+        userStore.setUserEmail(UserInfoResult.data.useremail)
+        userStore.setUserGroups(UserInfoResult.data.usergroups)
+        userStore.setUserKey(UserInfoResult.data.userkey)
+    }
 }
 function UserLogout() {
     localStorage.removeItem("token")
@@ -102,34 +94,23 @@ function editField(field) {
     editing.value = true;
     if (field === 'userqq') {
         watch(editUserqq, (newValue, oldValue) => {
-
             userStore.setUserQQ(newValue);
         });
     }
 }
 
 
-function confirmUpdate() {
-    axios
-        .get("/api/UserUpdate", {
-            params: {
-                type: "userqq",
-                data: userStore.$state.userqq
-            },
-            headers: {
-                Authorization: localStorage.getItem("token"),
-            },
-        })
-        .then(function (response) {
-            console.log(response.data);
-            if (response.data.status == true) {
-                showDialog(response.data.message);
-            } else {
-                showDialog(response.data.message);
-            }
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+async function confirmUpdate() {
+    let options = {
+        url: `/api/UserUpdate?type=userqq&data=${userStore.$state.userqq}`,
+        headers: { Authorization: localStorage.getItem("token") }
+    }
+    let UserUpdateResult = await HttpRequest(options)
+    console.log(UserUpdateResult);
+    if (UserUpdateResult.status == true) {
+        showDialog(UserUpdateResult.message);
+    } else {
+        showDialog(UserUpdateResult.message);
+    }
 }
 </script>

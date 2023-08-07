@@ -1,10 +1,21 @@
-# User-Center
- 基于vue3 + pinia + vuerouter 实现 简单的 用户登录注册
-# 打包 
-``````
-npm run build
-``````
-# 调试
-``````
+# UserCenter-Client
+
+基于 vue3 pinia vuerouter 实现简单的用户登录注册信息查询更新信息的客户端-前端
+
+# 安装依赖
+
+```sh
+npm install
+```
+
+### 调试
+
+```sh
 npm run dev
-``````
+```
+
+### 打包
+
+```sh
+npm run build
+```
